@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Andries-Smit/mx-build-script.git"
+    "url": "git+https://github.com/FlockOfBirds/mendix-widget-build-script.git"
   },
   "author": "Andries Smit",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Andries-Smit/mx-build-script/issues"
+    "url": "https://github.com/FlockOfBirds/mendix-widget-build-script/issues"
   },
-  "homepage": "https://github.com/Andries-Smit/mx-build-script#readme",
+  "homepage": "https://github.com/FlockOfBirds/mendix-widget-build-script#readme",
   "dependencies": {
     "@types/archiver": "^2.0.0",
     "@types/node": "^6.0.82",
