@@ -17,7 +17,7 @@ exports.getSettings = () => {
     let settings = exports.defaultSettings;
     if (fs.existsSync(localSettingFile)) {
         console.log("Running with local settings from " + localSettingFile);
-        const localFileSettings = require("./localSettings").settings;
+        const localFileSettings = require(localSettingFile).settings;
         console.log("localFileSettings", localFileSettings);
         settings = Object.assign({}, settings, localFileSettings);
         checkSettings(settings);

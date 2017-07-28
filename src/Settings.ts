@@ -50,7 +50,7 @@ export const getSettings = (): Settings => {
     let settings: PartialSettings = defaultSettings;
     if (fs.existsSync(localSettingFile)) {
         console.log("Running with local settings from " + localSettingFile);
-        const localFileSettings = require("./localSettings").settings;
+        const localFileSettings = require(localSettingFile).settings;
         console.log("localFileSettings", localFileSettings);
         settings = { ...settings, ...localFileSettings };
         checkSettings(settings);
