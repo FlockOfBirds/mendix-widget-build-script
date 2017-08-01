@@ -1,9 +1,13 @@
-// tslint:disable:rule no-console no-angle-bracket-type-assertion no-var-requires
 import * as fs from "fs";
 import * as path from "path";
-import { EnvironmentMode } from "./DeploymentService";
+import { EnvironmentMode } from "./services/DeploymentService";
 
-const projectPath = path.resolve(__dirname, "../../../");
+const devMode = process.env.RUN_MODE && (<string>process.env.RUN_MODE).trim() === "dev";
+if (devMode) {
+    console.log("Running in dev mode");
+}
+
+const projectPath = path.resolve(__dirname, devMode ? "../" : "../../../");
 const pkg: any = require(path.resolve(projectPath, "package.json"));
 
 export interface MinimalSettings {
@@ -13,11 +17,10 @@ export interface MinimalSettings {
     password: string;
     projectId: string;
 }
-interface Settings extends MinimalSettings {
+export interface Settings extends MinimalSettings {
     apiUrl: string;
     branchName: string;
     environment: EnvironmentMode;
-    projectUrl: string;
     teamServerUrl: string;
     testProjectName: string;
     widget: {
@@ -32,14 +35,12 @@ interface Settings extends MinimalSettings {
 }
 
 export const defaultSettings: PartialSettings = {
-    apiUrl: "https://deploy.mendix.com/api/1",
     branchName: "trunk",
     environment: "Sandbox",
-    teamServerUrl: "https://teamserver.sprintr.com",
     testProjectName: "TestProject.mpk"
 };
 
-type Partial<T> = {
+export type Partial<T> = {
     [P in keyof T]?: T[P];
 };
 
@@ -58,17 +59,21 @@ export const getSettings = (): Settings => {
         console.log("Running with CI settings");
         checkEnvVars();
         settings = {
-            apiUrl: process.env.MX_API_URL || defaultSettings.apiUrl,
             appName: process.env.MX_APP_NAME,
             branchName: process.env.MX_BRANCH_NAME || defaultSettings.branchName,
             environment: <EnvironmentMode>process.env.MX_ENVIRONMENT || defaultSettings.environment,
             key: process.env.MX_API_KEY,
             password: process.env.MX_PASSWORD,
             projectId: process.env.MX_PROJECT_ID,
-            teamServerUrl: process.env.MX_TEAM_SERVER_URL || defaultSettings.teamServerUrl,
             testProjectName: process.env.MX_TEST_PROJECT_NAME || defaultSettings.testProjectName,
             user: process.env.MX_USER
         };
+        if (process.env.MX_API_URL) {
+            settings.apiUrl = process.env.MX_API_URL;
+        }
+        if (process.env.MX_TEAM_SERVER_URL) {
+            settings.teamServerUrl = process.env.MX_TEAM_SERVER_URL;
+        }
     } else {
         throw Error("No config found, for local config add 'localConfig.js'");
     }
@@ -82,7 +87,6 @@ export const getSettings = (): Settings => {
         name: pkg.widgetName,
         version: pkg.version
     };
-    settings.projectUrl = settings.teamServerUrl + "/" + settings.projectId;
     return <Settings>settings;
 };
 

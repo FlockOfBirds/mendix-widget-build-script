@@ -1,5 +1,4 @@
-// tslint:disable:rule no-console
-import { SvnService } from "./SvnService";
+import { SvnService } from "./services/SvnService";
 import { getSettings } from "./Settings";
 import * as fs from "fs";
 import * as archiver from "archiver";
@@ -8,7 +7,10 @@ import * as path from "path";
 const settings = getSettings();
 console.log("Update Mendix project with settings: " + JSON.stringify(settings));
 
-const svn = new SvnService(settings.projectUrl, settings.user, settings.password, settings.folder.build);
+const svn = new SvnService(settings.user, settings.password, settings.folder.build);
+if (settings.teamServerUrl) {
+    svn.setBaseUrl(settings.teamServerUrl);
+}
 
 updateProject().then(success => process.exit(0), error => process.exit(1));
 
@@ -16,7 +18,7 @@ async function updateProject() {
     return new Promise<boolean>(async (resolve, reject) => {
         try {
             console.log("Checking out to " + settings.folder.build);
-            await svn.checkOutBranch(settings.branchName);
+            await svn.checkOutBranch(settings.projectId, settings.branchName);
             console.log("Copy widget");
             await copyWidget(path.join(settings.folder.build, "widgets"));
             console.log("create release folder ", settings.folder.release);

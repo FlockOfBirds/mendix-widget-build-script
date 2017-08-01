@@ -52,8 +52,9 @@ exports.settings = {
 .gitignore
 > localConfig.js
 
-4) Add to your npm script the required scripts for deployment
+4) Add to the npm `package.json` the "widgetName" and the script the required scripts for deployment
 ```
+"widgetName": "MyAwesomeWidget",
 "scripts": {
     "pretest": "<build script, output the widget into 'dist/<version>'>",
     "test": "npm run updateProject && npm run deployApp && <integrations test>",
@@ -72,3 +73,14 @@ exports.settings = {
 7) Commit the changes int your repo (Except the local config)
 
 8) Checkout how your build is doing `https://travis-ci.org/<user/org>/<repo>/`
+
+## develop
+
+Testings can be done with copy and configure `localSettings.js` in the project root and run:
+
+> npm run updateProject
+> npm run deployApp
+
+Release build:
+
+> npm run build

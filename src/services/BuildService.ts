@@ -1,4 +1,3 @@
-// tslint:disable:rule object-literal-sort-keys max-line-length no-console
 import { Headers, RequestAPI, get, post } from "request";
 import { deleteRequest, getFile, getRequest, postRequest } from "./Service";
 
@@ -7,11 +6,11 @@ interface DeployError {
     errorCode: string;
 }
 
-interface Build {
+export interface Build {
     PackageId: string;
 }
 
-interface Package {
+export interface Package {
     PackageId: string;
     Name: string;
     Description: string;
@@ -22,10 +21,15 @@ interface Package {
     Size: number;
 }
 
+/**
+ * The Build API allows you to manage deployment packages and create new deployment packages using our build server. You will need the information from the Teamserver API as input for these API calls.
+ * Based on https://docs.mendix.com/apidocs-mxsdk/apidocs/build-api
+ */
 export class BuildService {
     private headers: Headers;
+    private baseUrl = "https://deploy.mendix.com/api/1";
 
-    constructor(private baseUrl: string, private user: string, private key: string) {
+    constructor(private user: string, private key: string) {
         // todo  strip last of base url.
         this.headers = {
             "Mendix-Username": user,
@@ -34,6 +38,17 @@ export class BuildService {
         };
     }
 
+    setBaseUrl(url: string) {
+        this.baseUrl = url;
+    }
+
+    /**
+     * Start the process to build a deployment package, based on the team server project of a specific app that the authenticated user has access to as a regular user. This package can be found if you click Details on an app in the Nodes screen in the Mendix Platform. For a Sandbox, this will also trigger a deployment of the new package.
+     * @param appId Subdomain name of an app.
+     * @param branchName Name of the branch. This is ‘trunk’ for the main line or a specific branch name.
+     * @param revision Number of the revision to build a package from.
+     * @param version Package version. This will also be the name of the tag on the project team server.
+     */
     startBuild(appId: string, branchName: string, revision: string, version: string): Promise<Build> {
         const currentDate = new Date();
         const timeStamp = currentDate.getFullYear() + "-"
@@ -54,6 +69,12 @@ export class BuildService {
         });
     }
 
+    /**
+     * Wait for building process to finish
+     * @param appId Subdomain name of an app.
+     * @param packageId Unique identification of the package that build
+     * @param timeOutSeconds maximum waiting time for build to complete.
+     */
     waitForBuild(appId: string, packageId: string, timeOutSeconds: number): Promise<Package> {
         return new Promise<Package>((resolve, reject) => {
             const date = Date.now();
@@ -109,6 +130,12 @@ export class BuildService {
         });
     }
 
+    /**
+     * Downloads a specific deployment package that is available for a specific app that the authenticated user has access to as a regular user. This package can be found if you click Details on an app in the Nodes screen in the Mendix Platform.
+     * @param appId Subdomain name of an app.
+     * @param packageId Id of the deployment package.
+     * @param filename full path and filename where the downloaded file needs to be stored
+     */
     downloadPackage(appId: string, packageId: string, filename: string): Promise<string> {
         return getFile({
             url: `${this.baseUrl}/apps/${appId}/packages/${packageId}/download`,
@@ -116,6 +143,11 @@ export class BuildService {
         }, filename);
     }
 
+    /**
+     * Deletes a specific deployment package that is available for a specific app that the authenticated user has access to as a regular user. This package can be found if you click Details on an app in the Nodes screen in the Mendix Platform.
+     * @param appId Subdomain name of an app.
+     * @param packageId Id of the deployment package.
+     */
     deletePackage(appId: string, packageId: string): Promise<string> {
         return deleteRequest({
             url: `${this.baseUrl}/apps/${appId}/packages/${packageId}`,

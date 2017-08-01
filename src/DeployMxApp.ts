@@ -1,6 +1,5 @@
-// tslint:disable:rule no-console max-line-length
-import { DeploymentService, EnvironmentMode } from "./DeploymentService";
-import { BuildService } from "./BuildService";
+import { DeploymentService, EnvironmentMode } from "./services/DeploymentService";
+import { BuildService } from "./services/BuildService";
 import { getSettings } from "./Settings";
 import * as archiver from "archiver";
 
@@ -11,8 +10,12 @@ const appName = settings.appName;
 const environment: EnvironmentMode = settings.environment;
 const branchName = settings.branchName;
 
-const deploy = new DeploymentService(settings.apiUrl, settings.user, settings.key);
-const build = new BuildService(settings.apiUrl, settings.user, settings.key);
+const deploy = new DeploymentService(settings.user, settings.key);
+const build = new BuildService(settings.user, settings.key);
+if (settings.apiUrl) {
+    deploy.setBaseUrl(settings.apiUrl);
+    build.setBaseUrl(settings.apiUrl);
+}
 
 deployApp().then(success => process.exit(0), error => process.exit(1));
 
@@ -37,10 +40,9 @@ async function deployApp() {
                 reject("No build succeeded within 10 minutes.");
                 return;
             }
-            let started = false;
             if (environment === "Sandbox") {
                 // Build in the Sandbox does automatically transport and and restarts after 60 seconds
-                started = await deploy.waitForSandboxStart(appName, 600);
+                await deploy.waitForSandboxStart(appName, 600);
             } else {
                 console.log("Stop app:", appName, environment);
                 await deploy.stopApp(appName, environment);
@@ -51,17 +53,11 @@ async function deployApp() {
                 console.log("Start app:", appName, environment);
                 const startJob = await deploy.startApp(appName, environment);
                 console.log("Wait for startup:", appName, environment, startJob.JobId);
-                started = await deploy.waitForStart(appName, environment, startJob.JobId, 600);
+                await deploy.waitForStart(appName, environment, startJob.JobId, 600);
             }
 
-            if (started === true) {
-                console.log("App successfully started.");
-                resolve(true);
-            } else {
-                console.error("Failed to startup");
-                reject("Failed to startup");
-            }
-            console.log("Done");
+            console.log("App successfully started.");
+            resolve(true);
         } catch (error) {
             console.error("Error deploying", error);
             reject(error);

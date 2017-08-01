@@ -1,68 +1,66 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// tslint:disable:rule no-angle-bracket-type-assertion max-line-length
-const request_1 = require("request");
-const fs = require("fs");
-function getRequest(opts) {
-    return new Promise((resolve, reject) => {
-        request_1.get(opts, (error, response, body) => {
+import { Headers, RequestAPI, del, get, post } from "request";
+import * as fs from "fs";
+
+interface ServiceError {
+    errorMessage: string;
+    errorCode: string;
+}
+
+export function getRequest<T>(opts: any) {
+    return new Promise<T>((resolve, reject) => {
+        get(opts, (error: any, response: any, body: any) => {
             const parsedBody = JSON.parse(body);
             if (error || response.statusCode < 200 || response.statusCode > 300) {
-                const errorDetails = parsedBody;
+                const errorDetails = <ServiceError>parsedBody;
                 reject(`failed with code ${response.statusCode}:\n${errorDetails.errorMessage}\n${errorDetails.errorCode}`);
-            }
-            else {
+            } else {
                 resolve(parsedBody);
             }
         });
     });
 }
-exports.getRequest = getRequest;
-function postRequest(opts) {
-    return new Promise((resolve, reject) => {
-        request_1.post(opts, (error, response, body) => {
+
+export function postRequest<T>(opts: any) {
+    return new Promise<T>((resolve, reject) => {
+        post(opts, (error: any, response: any, body: any) => {
             const parsedBody = JSON.parse(body);
             if (error || response.statusCode < 200 || response.statusCode > 300) {
-                const errorDetails = parsedBody;
+                const errorDetails = <ServiceError>parsedBody;
                 reject(`failed with code ${response.statusCode}:\n${errorDetails.errorMessage}\n${errorDetails.errorCode}`);
-            }
-            else {
+            } else {
                 resolve(parsedBody);
             }
         });
     });
 }
-exports.postRequest = postRequest;
-function deleteRequest(opts) {
-    return new Promise((resolve, reject) => {
-        request_1.del(opts, (error, response, body) => {
+
+export function deleteRequest<T>(opts: any) {
+    return new Promise<T>((resolve, reject) => {
+        del(opts, (error: any, response: any, body: any) => {
             const parsedBody = JSON.parse(body);
             if (error || response.statusCode < 200 || response.statusCode > 300) {
-                const errorDetails = parsedBody;
+                const errorDetails = <ServiceError>parsedBody;
                 reject(`failed with code ${response.statusCode}:\n${errorDetails.errorMessage}\n${errorDetails.errorCode}`);
-            }
-            else {
+            } else {
                 resolve(parsedBody);
             }
         });
     });
 }
-exports.deleteRequest = deleteRequest;
-function getFile(opts, filename) {
-    return new Promise((resolve, reject) => {
+
+export function getFile(opts: any, filename: string) {
+    return new Promise<string>((resolve, reject) => {
         // opts.encoding = null;
-        request_1.get(opts, (error, response, body) => {
+        get(opts, (error: any, response: any, body: any) => {
             if (error || response.statusCode < 200 || response.statusCode > 300) {
                 const parsedBody = JSON.parse(body);
-                const errorDetails = parsedBody;
+                const errorDetails = <ServiceError>parsedBody;
                 reject(`failed with code ${response.statusCode}:\n${errorDetails.errorMessage}\n${errorDetails.errorCode}`);
-            }
-            else {
+            } else {
                 fs.writeFile(filename, body, writeError => {
                     if (!writeError) {
                         resolve("file written!");
-                    }
-                    else {
+                    } else {
                         reject("failed writing file");
                     }
                 });
@@ -70,21 +68,19 @@ function getFile(opts, filename) {
         });
     });
 }
-exports.getFile = getFile;
-function uploadFile(opts, filename) {
-    return new Promise((resolve, reject) => {
+
+export function uploadFile<T>(opts: any, filename: string) {
+    return new Promise<T>((resolve, reject) => {
         // opts.encoding = null;
         opts.body = fs.createReadStream(filename);
-        request_1.post(opts, (error, response, body) => {
+        post(opts, (error: any, response: any, body: any) => {
             const parsedBody = JSON.parse(body);
             if (error || response.statusCode < 200 || response.statusCode > 300) {
-                const errorDetails = parsedBody;
+                const errorDetails = <ServiceError>parsedBody;
                 reject(`failed with code ${response.statusCode}:\n${errorDetails.errorMessage}\n${errorDetails.errorCode}`);
-            }
-            else {
+            } else {
                 resolve(parsedBody);
             }
         });
     });
 }
-exports.uploadFile = uploadFile;

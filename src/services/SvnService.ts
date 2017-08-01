@@ -1,13 +1,12 @@
-// tslint:disable
 import * as svnUltimate from "node-svn-ultimate";
 
 export class SvnService {
-    private branchUrl
-    constructor(private baseUrl: string, private username: string, private password: string, private destination) {
-    }
+    private branchUrl;
+    private baseUrl = "https://teamserver.sprintr.com";
+    constructor(private username: string, private password: string, private destination) {}
 
-    checkOutBranch(branch: string) {
-        const branchUrl = this.getBranchUrl(branch);
+    checkOutBranch(projectId: string, branch: string) {
+        const branchUrl = this.getBranchUrl(projectId, branch);
         return new Promise<boolean>((resolve, reject) => {
             svnUltimate.commands.checkout(branchUrl, this.destination, {
                 username: this.username,
@@ -21,6 +20,10 @@ export class SvnService {
                 }
             } );
         });
+    }
+
+    setBaseUrl(url: string) {
+        this.baseUrl = url;
     }
 
     cleanup() {
@@ -65,9 +68,9 @@ export class SvnService {
         });
     }
 
-    createBranch(sourceBranch: string, targetBranch: string, message: string ) {
-        const sourceUrl = this.getBranchUrl(sourceBranch);
-        const targetUrl = this.getBranchUrl(targetBranch);
+    createBranch(projectId: string, sourceBranch: string, targetBranch: string, message: string ) {
+        const sourceUrl = this.getBranchUrl(projectId, sourceBranch);
+        const targetUrl = this.getBranchUrl(projectId, targetBranch);
         return new Promise((resolve, reject) => {
             svnUltimate.commands.copy(sourceUrl, targetUrl, {
                 username: this.username,
@@ -83,11 +86,7 @@ export class SvnService {
         });
     }
 
-    checkBranchExists(sourceBranch) {
-
-    }
-
-    private getBranchUrl(branch: string): string{
-        return branch === "trunk" ? `${this.baseUrl}/${branch}` : `${this.baseUrl}/branches/${branch}`;
+    private getBranchUrl(projectId: string, branch: string): string {
+        return branch === "trunk" ? `${this.baseUrl}/${projectId}/${branch}` : `${this.baseUrl}/${projectId}/branches/${branch}`;
     }
 }

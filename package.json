@@ -1,10 +1,14 @@
 {
   "name": "mendix-widget-build-script",
+  "widgetName": "HTMLSnippet",
   "version": "1.0.0",
   "description": "checkout, build and upload mx project to node",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "npm run lint && tsc --inlineSourceMap false --sourcemap false -d",
+    "updateProject": "tsc && set RUN_MODE=dev && node ./dist/UpdateMxProject.js",
+    "deployApp": "tsc && set RUN_MODE=dev && node ./dist/DeployMxApp.js",
+    "lint": "tslint -c tslint.json '**/*.ts' --exclude '**/node_modules/**'"
   },
   "repository": {
     "type": "git",
@@ -17,17 +21,16 @@
   },
   "homepage": "https://github.com/FlockOfBirds/mendix-widget-build-script#readme",
   "dependencies": {
-    "@types/archiver": "^2.0.0",
-    "@types/node": "^6.0.82",
     "archiver": "^2.0.0",
     "node-svn-ultimate": "^1.1.0",
-    "request": "^2.81.0",
-    "ts-node": "^3.2.0",
-    "typed-rest-client": "^0.10.0",
-    "typescript": "^2.4.1"
+    "request": "^2.81.0"
   },
   "devDependencies": {
+    "@types/archiver": "^2.0.0",
+    "@types/node": "^6.0.82",
     "@types/request": "0.0.46",
+    "ts-node": "^3.2.0",
+    "typescript": "^2.4.1",
     "nodemon": "^1.11.0",
     "tslint": "^5.5.0",
     "tslint-eslint-rules": "^4.1.1"
