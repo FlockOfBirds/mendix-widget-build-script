@@ -1,11 +1,11 @@
 {
   "name": "mendix-widget-build-script",
   "widgetName": "HTMLSnippet",
-  "version": "1.0.0",
+  "version": "1.0.0-beta2",
   "description": "checkout, build and upload mx project to node",
   "main": "index.ts",
   "scripts": {
-    "copyTest": "copyfiles -f ./tests/HTMLSnippet.mpk ./dist/1.0.0/",
+    "copyTest": "copyfiles -f ./tests/HTMLSnippet.mpk ./dist/1.0.0-beta2/",
     "pretest": "npm run lint && npm run build && npm run copyTest",
     "test": "npm run updateProject && npm run deployApp",
     "build": "npm run lint && tsc --inlineSourceMap false --sourcemap false -d",
