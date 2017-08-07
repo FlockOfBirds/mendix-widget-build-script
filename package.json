@@ -5,6 +5,9 @@
   "description": "checkout, build and upload mx project to node",
   "main": "index.ts",
   "scripts": {
+    "copyTest": "copyfiles -f ./tests/HTMLSnippet.mpk ./dist/1.0.0/",
+    "pretest": "npm run lint && npm run build && npm run copyTest",
+    "test": "npm run updateProject && npm run deployApp",
     "build": "npm run lint && tsc --inlineSourceMap false --sourcemap false -d",
     "updateProject": "tsc && set RUN_MODE=dev && node ./dist/UpdateMxProject.js",
     "deployApp": "tsc && set RUN_MODE=dev && node ./dist/DeployMxApp.js",
@@ -29,10 +32,11 @@
     "@types/archiver": "^2.0.0",
     "@types/node": "^6.0.82",
     "@types/request": "0.0.46",
-    "ts-node": "^3.2.0",
-    "typescript": "^2.4.1",
+    "copyfiles": "^1.2.0",
     "nodemon": "^1.11.0",
+    "ts-node": "^3.2.0",
     "tslint": "^5.5.0",
-    "tslint-eslint-rules": "^4.1.1"
+    "tslint-eslint-rules": "^4.1.1",
+    "typescript": "^2.4.1"
   }
 }
