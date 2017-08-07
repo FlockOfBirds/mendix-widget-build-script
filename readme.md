@@ -84,3 +84,8 @@ Testings can be done with copy and configure `localSettings.js` in the project r
 Release build:
 
 > npm run build
+
+Test:
+
+> npm test
+
