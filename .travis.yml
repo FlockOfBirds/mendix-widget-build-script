@@ -10,6 +10,7 @@ cache:
   - node_modules
 env:
   global:
+  - RUN_MODE=dev
   - MX_APP_NAME=widgetbuildscript
   - MX_PROJECT_ID=3df7b609-e8f6-4d28-8e3c-6e665d914c19
   - MX_USER=ci@flockofbirds.org
