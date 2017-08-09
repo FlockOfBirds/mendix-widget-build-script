@@ -17,6 +17,7 @@ export interface MinimalSettings {
     password: string;
     projectId: string;
 }
+
 export interface Settings extends MinimalSettings {
     apiUrl: string;
     branchName: string;
@@ -34,25 +35,18 @@ export interface Settings extends MinimalSettings {
     };
 }
 
-export const defaultSettings: PartialSettings = {
+export const defaultSettings: Partial<Settings> = {
     branchName: "trunk",
     environment: "Sandbox",
     testProjectName: "TestProject.mpk"
 };
 
-export type Partial<T> = {
-    [P in keyof T]?: T[P];
-};
-
-export type PartialSettings = Partial<Settings>;
-
 export const getSettings = (): Settings => {
     const localSettingFile = path.resolve(projectPath, "localSettings.js");
-    let settings: PartialSettings = defaultSettings;
+    let settings = defaultSettings;
     if (fs.existsSync(localSettingFile)) {
         console.log("Running with local settings from " + localSettingFile);
         const localFileSettings = require(localSettingFile).settings;
-        console.log("localFileSettings", localFileSettings);
         settings = { ...settings, ...localFileSettings };
         checkSettings(settings);
     } else if (process.env.CI) {
@@ -87,7 +81,7 @@ export const getSettings = (): Settings => {
         name: pkg.widgetName,
         version: pkg.version
     };
-    return <Settings>settings;
+    return settings as Settings;
 };
 
 function checkEnvVars() {
@@ -98,8 +92,9 @@ function checkEnvVars() {
     }
 }
 
-function checkSettings(settings: PartialSettings) {
-    const minimalSettings = [ "appName", "key", "password", "projectId", "user" ];
+function checkSettings(settings: Partial<Settings>) {
+    type SettingsKeys = keyof Settings;
+    const minimalSettings: SettingsKeys[] = [ "appName", "key", "password", "projectId", "user" ];
     const missingSettings = minimalSettings.filter(varName => !settings[varName]);
     if (missingSettings.length > 0) {
         throw Error("Missing setting: " + missingSettings.join(", "));

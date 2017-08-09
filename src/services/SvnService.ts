@@ -1,13 +1,20 @@
+///<reference path="../../typings/node-svn-ultimate.d.ts" />
+
 import * as svnUltimate from "node-svn-ultimate";
 
 export class SvnService {
-    private branchUrl;
+    /**
+     * Log the service calls to the console.
+     */
+    showLog = true;
     private baseUrl = "https://teamserver.sprintr.com";
-    constructor(private username: string, private password: string, private destination) {}
+
+    constructor(private username: string, private password: string, private destination: string) {}
 
     checkOutBranch(projectId: string, branch: string) {
         const branchUrl = this.getBranchUrl(projectId, branch);
-        return new Promise<boolean>((resolve, reject) => {
+        this.log(`Checking out ${branchUrl} to ${this.destination}`);
+        return new Promise<void>((resolve, reject) => {
             svnUltimate.commands.checkout(branchUrl, this.destination, {
                 username: this.username,
                 password: this.password
@@ -22,12 +29,17 @@ export class SvnService {
         });
     }
 
+    /**
+     * Overwrite the default API RUL
+     * @param url - The URL to the Mendix API
+     */
     setBaseUrl(url: string) {
         this.baseUrl = url;
     }
 
     cleanup() {
-        return new Promise((resolve, reject) => {
+        this.log(`Clean up working copy ${this.destination}`);
+        return new Promise<void>((resolve, reject) => {
             svnUltimate.commands.cleanup(this.destination, {}, (error) => {
                 if (!error) {
                     resolve();
@@ -39,21 +51,23 @@ export class SvnService {
     }
 
     status() {
-        return new Promise((resolve, reject) => {
+        this.log(`Get working copy status of ${this.destination}`);
+        return new Promise<any>((resolve, reject) => {
             svnUltimate.commands.status(this.destination, {}, (error, data) => {
-                console.log("status", data);
+                this.log("status", data);
                 // console.log("status", data.target.entry.$.path, data.target.entry["wc-status"].$.item);
                 if (!error) {
-                    resolve();
+                    resolve(data);
                 } else {
                     reject("failed to status " + this.destination + error);
                 }
-            } );
+            });
         });
     }
 
     commit(files: string, message: string) {
-        return new Promise((resolve, reject) => {
+        this.log(`Committing changes ${files} message: ${message}`);
+        return new Promise<void>((resolve, reject) => {
             svnUltimate.commands.commit(files, {
                 username: this.username,
                 password: this.password,
@@ -71,7 +85,8 @@ export class SvnService {
     createBranch(projectId: string, sourceBranch: string, targetBranch: string, message: string ) {
         const sourceUrl = this.getBranchUrl(projectId, sourceBranch);
         const targetUrl = this.getBranchUrl(projectId, targetBranch);
-        return new Promise((resolve, reject) => {
+        this.log(`Create branch copy from ${sourceUrl} to: ${targetUrl}`);
+        return new Promise<void>((resolve, reject) => {
             svnUltimate.commands.copy(sourceUrl, targetUrl, {
                 username: this.username,
                 password: this.password,
@@ -89,4 +104,14 @@ export class SvnService {
     private getBranchUrl(projectId: string, branch: string): string {
         return branch === "trunk" ? `${this.baseUrl}/${projectId}/${branch}` : `${this.baseUrl}/${projectId}/branches/${branch}`;
     }
+
+    private log(message: string, inline = false) {
+        if (this.showLog) {
+            if (inline && process && process.stdout) {
+                process.stdout.write(". ");
+            } else {
+                console.log(message);
+            }
+        }
+     }
 }

@@ -1,10 +1,9 @@
 sudo: required
-dist: trusty
 language: node_js
 node_js:
 - '6'
 before_install:
-- npm i -g npm@5
+- npm i -g npm@latest
 - npm install grunt-cli -g
 - export CHROME_BIN=chromium-browser
 - export DISPLAY=:99.0
@@ -21,22 +20,6 @@ cache:
   - node_modules
 env:
   global:
-  - MX_API_URL=https://deploy.mendix.com/api/1
-  - MX_APP_NAME=appName
-  - MX_TEAM_SERVER_URL=https://teamserver.sprintr.com
-  - MX_BRANCH_NAME=trunk
-  - secure: Z/onZeXXLhah228r/Iijn4g+MiPairgdY/wq0mgUXfYHcI=
-  - MX_ENVIRONMENT=Sandbox
-  - MX_PROJECT_ID=xxxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxxxxxx
-  - MX_USER=ci@example.org
-  - secure: iexj9Th1Tq07AWIK7MyvrlFCVI7JhfQ3D5zLJSuo78ZN=
-deploy:
-  provider: releases
-  api_key:
-    secure: mQtgwYHfLN8JGuTUQfKrBxJsGw5oG9ii0qa8gBDQL5=
-  file_glob: true
-  file: dist/release/*
-  skip_cleanup: true
-  on:
-    repo: github-user/github-repo
-    tags: true
+  - MX_APP_NAME=your-app-name
+  - MX_PROJECT_ID=your-project-id
+  - MX_USER=your-mendix-user-email@your-domain.com

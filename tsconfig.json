@@ -2,13 +2,15 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    // "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "skipLibCheck": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
     "moduleResolution": "node",
     "outDir": "./dist",
-    "inlineSourceMap": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "inlineSourceMap": true
   },
   "include": [
     "src/**/*"

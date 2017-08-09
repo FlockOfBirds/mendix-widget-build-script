@@ -5,11 +5,11 @@
 import { MinimalSettings } from "./Settings";
 
 export const settings: MinimalSettings = {
-    appName: "appName",
-    key: "xxxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxxxxxx",
-    password: "secret",
-    projectId: "xxxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxxxxxx",
-    user: "ci@example.com"
+    appName: "your-app-name",
+    key: "your-mendix-account-api-key",
+    password: "your-mendix-password",
+    projectId: "your-project-id",
+    user: "your-mendix-user-email@your-domain.com"
 };
 
 // NEVER EVER COMMIT THIS FILE!!

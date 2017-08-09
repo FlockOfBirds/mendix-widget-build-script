@@ -1,4 +1,4 @@
-import { Headers, RequestAPI, del, get, post } from "request";
+import { del, get, post } from "request";
 import * as fs from "fs";
 
 interface ServiceError {

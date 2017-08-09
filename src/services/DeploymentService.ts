@@ -1,4 +1,4 @@
-import { Headers, RequestAPI, get, post } from "request";
+import { Headers, get } from "request";
 import { getRequest, postRequest, uploadFile } from "./Service";
 
 export interface App {
@@ -72,9 +72,14 @@ export type EnvironmentMode = "Sandbox" | "Test" | "Acceptance" | "Production";
  * Based on https://docs.mendix.com/apidocs-mxsdk/apidocs/deploy-api
  */
 export class DeploymentService {
+    /**
+     * Log the service calls to the console.
+     */
+    showLog = true;
     private headers: Headers;
     private baseUrl = "https://deploy.mendix.com/api/1";
-    constructor(private user: string, private key: string) {
+
+    constructor(user: string, key: string) {
         // todo  strip last of base url.
         this.headers = {
             "Mendix-Username": user,
@@ -83,17 +88,22 @@ export class DeploymentService {
         };
     }
 
+    /**
+     * Overwrite the default API RUL
+     * @param url - The URL to the Mendix API
+     */
     setBaseUrl(url: string) {
         this.baseUrl = url;
     }
 
     /**
      * Retrieves a specific branch that belongs to the team server project of a specific app which the authenticated user has access to as a regular user.
-     * @param appName Subdomain name of an app.
-     * @param branchName Name of the branch to get or ‘trunk’ to get the main line.
+     * @param appName - Subdomain name of an app.
+     * @param branchName - Name of the branch to get or ‘trunk’ to get the main line.
      */
     getBranch(appName: string, branchName: string): Promise<Branch> {
-        // todo move TeamServerServices
+        // TODO: Could be move TeamServerServices
+        this.log(`Get branch details ${appName} ${branchName}`);
         return getRequest<Branch>({
             url: `${this.baseUrl}/apps/${appName}/branches/${branchName}`,
             headers: this.headers
@@ -104,6 +114,7 @@ export class DeploymentService {
      * Retrieves all apps which the authenticated user has access to as a regular user. These apps can be found via the “Nodes overview” screen in the Mendix Platform.
      */
     getApps(): Promise<App[]> {
+        this.log(`Get all apps`);
         return getRequest<App[]>({
             url: `${this.baseUrl}/apps/`,
             headers: this.headers
@@ -112,10 +123,11 @@ export class DeploymentService {
 
     /**
      * Retrieves a specific environment that is connected to a specific app which the authenticated user has access to as a regular user
-     * @param appId Sub-domain name of an app.
-     * @param mode The mode of the environment of the app. An environment with this mode should exist.
+     * @param appId - Sub-domain name of an app.
+     * @param mode - The mode of the environment of the app. An environment with this mode should exist.
      */
     getEnvironment(appId: string, mode: EnvironmentMode): Promise<Environment> {
+        this.log(`Get environnement details for ${appId} ${mode}`);
         return getRequest<Environment>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}`,
             headers: this.headers
@@ -124,9 +136,10 @@ export class DeploymentService {
 
     /**
      * Retrieves all environments that are connected to a specific app which the authenticated user has access to as a regular user. These environments can be found via the “Nodes overview” screen in the Mendix Platform.
-     * @param appId Sub-domain name of an app.
+     * @param appId - Sub-domain name of an app.
      */
     getEnvironments(appId: string): Promise<Environment[]> {
+        this.log(`Get environments for ${appId}`);
         return getRequest<Environment[]>({
             url: `${this.baseUrl}/apps/${appId}/environments/`,
             headers: this.headers
@@ -135,9 +148,10 @@ export class DeploymentService {
 
     /**
      * Retrieves a specific app which the authenticated user has access to as a regular user. These app can be found via the “Nodes overview” screen in the Mendix Platform.
-     * @param appId Sub-domain name of an app.
+     * @param appId - Sub-domain name of an app.
      */
     getApp(appId: string): Promise<App[]> {
+        this.log(`Get app details fro  ${appId}`);
         return getRequest<App[]>({
             url: `${this.baseUrl}/apps/${appId}`,
             headers: this.headers
@@ -146,9 +160,10 @@ export class DeploymentService {
 
     /**
      * Creates a sandbox application for a requested project id.
-     * @param projectId The sprintr project identifier that should be linked to the new sandbox application.
+     * @param projectId - The sprintr project identifier that should be linked to the new sandbox application.
      */
     createSandbox(projectId: string): Promise<Sandbox> {
+        this.log(`Create sandbox for project ${projectId}`);
         return postRequest<Sandbox>({
             url: `${this.baseUrl}/apps/`,
             headers: this.headers,
@@ -160,10 +175,11 @@ export class DeploymentService {
 
     /**
      * Stops a specific environment that is connected to a specific app which the authenticated user has access to as a regular user. These environments can be found via the “Nodes overview” screen in the Mendix Platform.
-     * @param appId Sub-domain name of an app.
-     * @param mode Mode of the environment. Possible values: Test, Acceptance, Production.
+     * @param appId - Sub-domain name of an app.
+     * @param mode - Mode of the environment. Possible values: Test, Acceptance, Production.
      */
     stopApp(appId: string, mode: EnvironmentMode): Promise<string> {
+        this.log(`Stop app: ${appId} ${mode}`);
         return postRequest<string>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}/stop`,
             headers: this.headers
@@ -172,10 +188,11 @@ export class DeploymentService {
 
     /**
      * Removes all data from a specific environment including files and database records. This action requires the environment to be in “NotRunning” status.
-     * @param appId Sub-domain name of an app.
-     * @param mode Mode of the environment. Possible values: Test, Acceptance, Production.
+     * @param appId - Sub-domain name of an app.
+     * @param mode - Mode of the environment. Possible values: Test, Acceptance, Production.
      */
     cleanApp(appId: string, mode: EnvironmentMode): Promise<string> {
+        this.log(`Clean environment: ${appId} ${mode}`);
         return postRequest<string>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}/clean`,
             headers: this.headers
@@ -184,12 +201,13 @@ export class DeploymentService {
 
     /**
      * Transports a specific deployment package to a specific environment. This action requires the environment to be in the “NotRunning” status.
-     * @param appId Sub-domain name of an app.
-     * @param mode Mode of the environment. Possible values: Test, Acceptance, Production.
-     * @param packageId ID of the deployment package
+     * @param appId - Sub-domain name of an app.
+     * @param mode - Mode of the environment. Possible values: Test, Acceptance, Production.
+     * @param packageId - ID of the deployment package
      */
     transportPackage(appId: string, mode: EnvironmentMode, packageId: string): Promise<string> {
         // Check option for transport file?
+        this.log(`Transport package: ${appId} ${mode} ${packageId}`);
         return postRequest<string>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}/transport`,
             headers: this.headers,
@@ -201,11 +219,12 @@ export class DeploymentService {
 
     /**
      * Starts a specific environment that is connected to a specific app which the authenticated user has access to as a regular user. These environments can be found via the “Nodes overview” screen in the Mendix Platform.
-     * @param appId Sub-domain name of an app.
-     * @param mode Mode of the environment. Possible values: Test, Acceptance, Production.
+     * @param appId - Sub-domain name of an app.
+     * @param mode - Mode of the environment. Possible values: Test, Acceptance, Production.
      */
     startApp(appId: string, mode: EnvironmentMode): Promise<Job> {
         // Check option for transport file?
+        this.log(`Start app: ${appId} ${mode}`);
         return postRequest<Job>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}/start`,
             headers: this.headers,
@@ -217,9 +236,9 @@ export class DeploymentService {
 
     /**
      * Retrieve the status of the start environment action.
-     * @param appId Sub-domain name of an app.
-     * @param mode Mode of the environment. Possible values: Test, Acceptance, Production.
-     * @param jobId The identifier which can be used to track the progress of the start action
+     * @param appId - Sub-domain name of an app.
+     * @param mode - Mode of the environment. Possible values: Test, Acceptance, Production.
+     * @param jobId - The identifier which can be used to track the progress of the start action
      */
     getEnvironmentStartStatus(appId: string, mode: EnvironmentMode, jobId: string): Promise<EnvironmentStatus> {
         return getRequest<EnvironmentStatus>({
@@ -230,12 +249,13 @@ export class DeploymentService {
 
     /**
      * Wait for starting environment action returns the EnvironmentStatus
-     * @param appId Sub-domain name of an app.
-     * @param mode Mode of the environment. Possible values: Test, Acceptance, Production.
-     * @param jobId The identifier which can be used to track the progress of the start action
-     * @param timeOutSeconds The time in seconds before waiting to start will stop polling
+     * @param appId - Sub-domain name of an app.
+     * @param mode - Mode of the environment. Possible values: Test, Acceptance, Production.
+     * @param jobId - The identifier which can be used to track the progress of the start action
+     * @param timeOutSeconds - The time in seconds before waiting to start will stop polling, default 600s.
      */
-    waitForStart(appId: string, mode: EnvironmentMode, jobId: string, timeOutSeconds: number): Promise<EnvironmentStatus> {
+    waitForStart(appId: string, mode: EnvironmentMode, jobId: string, timeOutSeconds = 600): Promise<EnvironmentStatus> {
+        this.log(`Wait for startup: ${appId} ${mode} ${jobId} max ${timeOutSeconds} seconds`);
         return new Promise<EnvironmentStatus>((resolve, reject) => {
             const date = Date.now();
             const checkStatus = () => {
@@ -267,11 +287,12 @@ export class DeploymentService {
 
     /**
      * Wait for sandbox environment startup after build. Build automatically startup deployment to the sandbox
-     * @param appId Sub-domain name of an app.
-     * @param timeOutSeconds The time in seconds before waiting to start will stop polling.
+     * @param appId - Sub-domain name of an app.
+     * @param timeOutSeconds - The time in seconds before waiting to start will stop polling, default 600s.
      */
-    waitForSandboxStart(appId: string, timeOutSeconds: number): Promise<boolean> {
-        return new Promise<boolean>(async (resolve, reject) => {
+    waitForSandboxStart(appId: string, timeOutSeconds = 600): Promise<void> {
+        this.log(`Wait for sandbox to start ${appId} max ${timeOutSeconds} seconds`);
+        return new Promise<void>(async (resolve, reject) => {
             const environmentInfo = await this.getEnvironment(appId, "Sandbox");
             const url = environmentInfo.Url + "/xas/";
             const date = Date.now();
@@ -285,11 +306,10 @@ export class DeploymentService {
                 setTimeout(async () => {
                     try {
                         const statusCode = await this.getHttpStatusCode(url);
-                        // console.log(statusCode);
                         if (statusCode === 401) {
-                             resolve(true);
+                             resolve();
                         } else if (statusCode === 503) {
-                            process.stdout.write(". ");
+                            this.log(". ", true);
                             checkStatus();
                         } else {
                             reject("Error wait for start sandbox " + url + " code: " + statusCode);
@@ -299,17 +319,17 @@ export class DeploymentService {
                     }
                 }, 1000);
             };
-            console.log("Wait 60s before build start the transport");
+            this.log("Wait 60s before build start the transport");
             setTimeout(checkStatus, 60 * 1000);
         });
     }
 
     /**
      * Get the response code for a request to an URL
-     * @param url full URL to test
+     * @param url - Full URL to test
      */
     getHttpStatusCode(url: string): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<number>((resolve) => {
             get(url, (error: any, response: any) => {
                 resolve(response.statusCode);
             });
@@ -318,10 +338,11 @@ export class DeploymentService {
 
     /**
      * Uploads a deployment package from the local system to a specific app. This package can then be transported to a specific environment for deployment.
-     * @param appId Subdomain name of an app.
-     * @param filename path and filename.
+     * @param appId - Subdomain name of an app.
+     * @param filename - Path and filename.
      */
     uploadPackage(appId: string, filename: string): Promise<Upload> {
+        this.log(`Upload new package to ${appId} file: ${filename}`);
         return uploadFile<Upload>({
             url: `${this.baseUrl}/apps/${appId}/packages/upload`,
             headers: this.headers
@@ -330,10 +351,11 @@ export class DeploymentService {
 
     /**
      * Gets current values of custom settings, constants and scheduled events used by the target environment.
-     * @param appId Sub-domain name of an app.
-     * @param mode The mode of the environment of the app. An environment with this mode should exist.
+     * @param appId - Sub-domain name of an app.
+     * @param mode - The mode of the environment of the app. An environment with this mode should exist.
      */
     getEnvironmentSettings(appId: string, mode: EnvironmentMode): Promise<EnvironmentSettings> {
+        this.log(`Get environment settings ${appId} - ${mode}`);
         return getRequest<EnvironmentSettings>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}/settings/`,
             headers: this.headers
@@ -342,10 +364,11 @@ export class DeploymentService {
 
     /**
      * Changes value of existing environment settings like custom settings, constants and scheduled events. These changes are applied after restarting the environment.
-     * @param appId Sub-domain name of an app.
-     * @param mode The mode of the environment of the app. An environment with this mode should exist.
+     * @param appId - Sub-domain name of an app.
+     * @param mode - The mode of the environment of the app. An environment with this mode should exist.
      */
-    setEnvironmentSettings(appId: string, mode: EnvironmentMode, settings: EnvironmentSettings): Promise<string> {
+    setEnvironmentSettings(appId: string, mode: EnvironmentMode): Promise<string> {
+        this.log(`Set environment settings ${appId} - ${mode}`);
         return postRequest<string>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}/settings/`,
             headers: this.headers,
@@ -356,9 +379,19 @@ export class DeploymentService {
     }
 
     /*
-     TODO:
+     TODO: Not implemented services calls:
         List Environment Backups
         Download a Backup for an Environment
      */
+
+    private log(message: string, inline = false) {
+        if (this.showLog) {
+            if (inline && process && process.stdout) {
+                process.stdout.write(". ");
+            } else {
+                console.log(message);
+            }
+        }
+     }
 
 }
