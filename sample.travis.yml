@@ -23,3 +23,12 @@ env:
   - MX_APP_NAME=your-app-name
   - MX_PROJECT_ID=your-project-id
   - MX_USER=your-mendix-user-email@your-domain.com
+deploy:
+  provider: releases
+  api_key: $GITHUB_KEY
+  file_glob: true
+  file: dist/release/*
+  skip_cleanup: true
+  on:
+    repo: $TRAVIS_REPO_SLUG
+    tags: true

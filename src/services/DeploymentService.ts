@@ -319,7 +319,7 @@ export class DeploymentService {
                     }
                 }, 1000);
             };
-            this.log("Wait 60s before build start the transport");
+            this.log("Waiting 60 seconds before build process will start the transport");
             setTimeout(checkStatus, 60 * 1000);
         });
     }

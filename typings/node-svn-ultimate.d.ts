@@ -17,8 +17,8 @@ declare module "node-svn-ultimate" {
     export namespace commands {
 
         /** Checks out a repository to a working copy
-         * @param branchUrl Repository URL
-         * @param destination Working copy dir
+         * @param branchUrl - Repository URL
+         * @param destination - Working copy dir
          * @param options - Options object
          * @param callback - Complete callback
          */
