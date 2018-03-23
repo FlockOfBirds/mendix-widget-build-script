@@ -22,8 +22,8 @@ async function updateProject() {
             mkdirSync(settings.folder.release);
             await copyWidget(settings.folder.release);
             await zipFolder(settings.folder.build, path.resolve(settings.folder.release, settings.testProjectName));
-            const changedFile = path.join(settings.folder.build, "widgets", settings.widget.name + ".mpk");
-            await svn.commit(changedFile, "CI script commit");
+            const changedFiles = settings.widget.names.map(n => path.join(settings.folder.build, "widgets", n + ".mpk"));
+            await svn.commit(changedFiles, "CI script commit");
 
             console.log("Done");
             resolve();
@@ -37,14 +37,16 @@ async function updateProject() {
 async function copyWidget(destination: string) {
     console.log(`Copy widget to ${destination}`);
     return new Promise<void>((resolve, reject) => {
-        const filename = settings.widget.name + ".mpk";
-        const source = path.join(settings.folder.dist, settings.widget.version, filename);
         fs.access(destination, async error => {
             if (error) {
                 fs.mkdirSync(destination);
             }
             try {
-                await copyFile(source, path.join(destination, filename));
+                settings.widget.names.forEach(async name => {
+                    const filename = name + ".mpk";
+                    const source = path.join(settings.folder.dist, settings.widget.version, filename);
+                    await copyFile(source, path.join(destination, filename));
+                });
                 resolve();
             } catch (copyError) {
                 reject(copyError);

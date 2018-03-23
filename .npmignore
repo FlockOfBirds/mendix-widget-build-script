@@ -1,5 +1,5 @@
 node_modules/
 dist/mxbuild/
 dist/release/
-dist/1.0.0-rc2/
+dist/1.0.0/
 localSettings.js

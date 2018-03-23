@@ -23,4 +23,4 @@ deploy:
     secure: Agql4s6Bx3vG82NpUnLR2Rj4metr/peA/y3Wj/cwMZMfszb3Sz0Uaa4a4egNegbt4DsDaC9Abq/RwUfEFd27BYRb3bxE4UwRgHGFpUkQPXmi0eh/Q2jxrtKZLIYd+4kQTg0b1+3EXZJg3JO1zlGOJuzOL4K+3W/2rEP0Wn1DPYz7CES+oIEnGBK4yJb6AooOJF09qqme/2rEhdEvNoyYN2/yB2aS79FRrOMGDffxT5t/BHjCiwylf4SBsNsGVsJhef5PZDS6PBN5yJ7C3fkl0jGyhyrLO7DEGq6XoSQ7IydBnr+rgiZ9H4nnFDamvZTBO6xguQ1cg8w5+zCxXowVD9my0rxV9FdfoG/X+xXFdH46jaxocRF3vfBD3s8k4Ni6WkrzLypdyhR5qH+FrV7QWhwjmPTHHZwUt6QxbQTGhQ9Vv0YElSpipjwBhZQhV3IyIcvbVfuVXdT74toZOctMbUzo4/xst4j199pBnxxAFdn4m+tmfxXdpI/eB1R9DbPjRwrxnx7vEhhRwiE44VRazOjaLkZpUWi/M7SkGU6GssmTpBekchbf/13OCvo1H8QbpXjtCdaVshZMGkgaSN0sRx37BU9gDDgJ4ia+RMJrDSADmHd9RtDiQzRfZZD7eRSyhsuNfLe+4lTc13+0RuadqsmbqW/u+jZ48kZYA43T3Fw=
   on:
     tags: true
-    repo: FlockOfBirds/mendix-widget-build-script
+    repo: $TRAVIS_REPO_SLUG

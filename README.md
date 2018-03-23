@@ -8,6 +8,7 @@ After these scripts, integration tests could be run on the node.
  > npm install --save mendix-widget-build-script
 
 2) Copy the `sample.travis.yml` to your project root `.travis.yml`
+Note that `your-app-name` is the part in the sandbox URL: https://your-app-name.mxapps.io/ that might differ from the name of the project.
 Update the env: global variable:
 ``` yml
   - MX_APP_NAME=your-app-name
@@ -36,7 +37,7 @@ exports.settings = {
 !! **Important** !! Add this file to your git ignore, as the password and key are not encrypted they should never be committed into a public repository
 
 .gitignore
-> localConfig.js
+> localSettings.js
 
  When needed, you can overwrite the default values by adding them in the `exports.setting` object:
  ```
@@ -47,7 +48,7 @@ exports.settings = {
     teamServerUrl: "https://teamserver.sprintr.com"
  ```
 
-4) Add to the npm `package.json` the "widgetName" and the required scripts for deployment.
+4) Add to the npm `package.json` the "widgetName" (string | string[]) and the required scripts for deployment.
 ``` json
 "widgetName": "MyAwesomeWidget",
 "scripts": {
@@ -91,6 +92,8 @@ Note: that the environment variables in the travis-ci.org can be used to overwri
 7) Commit the changes into your repository (Except the local config)
 
 8) Checkout how your build is doing `https://travis-ci.org/<user/org>/<repo>/`
+
+9) When a `tag` is create in the git repository, the Travis CI script will start build, test and automatically add the .mpk to the GitHub release on success.
 
 ## Development
 

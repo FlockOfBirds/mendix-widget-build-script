@@ -89,6 +89,7 @@
     "no-angle-bracket-type-assertion": false,
     "max-line-length" : false,
     "no-var-requires": false,
-    "no-reference": false
+    "no-reference": false,
+    "prefer-conditional-expression": false
   }
 }

@@ -25,7 +25,7 @@ export interface Settings extends MinimalSettings {
     teamServerUrl: string;
     testProjectName: string;
     widget: {
-        name: string;
+        names: string[];
         version: string;
     };
     folder: {
@@ -69,7 +69,7 @@ export const getSettings = (): Settings => {
             settings.teamServerUrl = process.env.MX_TEAM_SERVER_URL;
         }
     } else {
-        throw Error("No config found, for local config add 'localConfig.js'");
+        throw Error("No config found, for local config add 'localSettings.js'");
     }
     const distFolder = path.resolve(projectPath, "dist");
     settings.folder = {
@@ -78,7 +78,7 @@ export const getSettings = (): Settings => {
         release: path.resolve(distFolder, "release")
     };
     settings.widget = {
-        name: pkg.widgetName,
+        names: (Array.isArray(pkg.widgetName) ? pkg.widgetName : [ pkg.widgetName ]) as string[],
         version: pkg.version
     };
     return settings as Settings;

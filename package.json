@@ -1,7 +1,7 @@
 {
   "name": "mendix-widget-build-script",
   "widgetName": "HTMLSnippet",
-  "version": "1.0.0-rc2",
+  "version": "1.0.0",
   "description": "Build script for checkout, build, upload and start a Mendix project in a cloud node",
   "scripts": {
     "copyTest": "copyfiles -f ./tests/HTMLSnippet.mpk ./dist/1.0.0-rc2/",
@@ -10,7 +10,8 @@
     "build": "npm run lint && tsc --inlineSourceMap false --sourcemap false -d",
     "updateProject": "tsc && set RUN_MODE=dev && node ./dist/UpdateMxProject.js",
     "deployApp": "tsc && set RUN_MODE=dev && node ./dist/DeployMxApp.js",
-    "lint": "tslint -c tslint.json '**/*.ts' --exclude '**/node_modules/**'"
+    "lint": "tslint -c tslint.json '**/*.ts' --exclude '**/node_modules/**'",
+    "publish" : "npm run build && npm publish"
   },
   "repository": {
     "type": "git",

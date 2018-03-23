@@ -65,7 +65,7 @@ export class SvnService {
         });
     }
 
-    commit(files: string, message: string) {
+    commit(files: string[], message: string) {
         this.log(`Committing changes ${files} message: ${message}`);
         return new Promise<void>((resolve, reject) => {
             svnUltimate.commands.commit(files, {
@@ -76,7 +76,7 @@ export class SvnService {
                 if (!error) {
                     resolve();
                 } else {
-                    reject("failed to commit " + files + " " + error);
+                    reject("failed to commit " + files.join(", ") + " " + error);
                 }
             } );
         });
