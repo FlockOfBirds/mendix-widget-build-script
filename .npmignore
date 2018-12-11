@@ -2,4 +2,6 @@ node_modules/
 dist/mxbuild/
 dist/release/
 dist/1.0.0/
+.vscode/
+.history/
 localSettings.js

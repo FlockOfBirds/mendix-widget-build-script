@@ -16,6 +16,9 @@ export interface Environment {
     Status: string;
     Url: string;
     mode: EnvironmentMode;
+    ModelVersion: string;
+    MendixVersion: string;
+    Production: string;
 }
 
 export interface EnvironmentStatus {
@@ -126,8 +129,10 @@ export class DeploymentService {
      * @param appId - Sub-domain name of an app.
      * @param mode - The mode of the environment of the app. An environment with this mode should exist.
      */
-    getEnvironment(appId: string, mode: EnvironmentMode): Promise<Environment> {
-        this.log(`Get environnement details for ${appId} ${mode}`);
+    getEnvironment(appId: string, mode: EnvironmentMode, log = true): Promise<Environment> {
+        if (log) {
+            this.log(`Get environnement details for ${appId} ${mode}`);
+        }
         return getRequest<Environment>({
             url: `${this.baseUrl}/apps/${appId}/environments/${mode}`,
             headers: this.headers
@@ -304,6 +309,12 @@ export class DeploymentService {
                     return;
                 }
                 setTimeout(async () => {
+                    const environmentInfoNew = await this.getEnvironment(appId, "Sandbox", false);
+                    if (environmentInfoNew.ModelVersion === environmentInfo.ModelVersion) {
+                        this.log(". ", true);
+                        checkStatus();
+                        return;
+                    }
                     try {
                         const statusCode = await this.getHttpStatusCode(url);
                         if (statusCode === 401) {
