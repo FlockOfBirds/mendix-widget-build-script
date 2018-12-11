@@ -25,7 +25,7 @@ export class SvnService {
                     this.cleanup();
                     reject("failed to checkout" + error);
                 }
-            } );
+            });
         });
     }
 
@@ -46,7 +46,7 @@ export class SvnService {
                 } else {
                     reject("failed to cleanup " + this.destination + error);
                 }
-            } );
+            });
         });
     }
 
@@ -78,11 +78,11 @@ export class SvnService {
                 } else {
                     reject("failed to commit " + files.join(", ") + " " + error);
                 }
-            } );
+            });
         });
     }
 
-    createBranch(projectId: string, sourceBranch: string, targetBranch: string, message: string ) {
+    createBranch(projectId: string, sourceBranch: string, targetBranch: string, message: string) {
         const sourceUrl = this.getBranchUrl(projectId, sourceBranch);
         const targetUrl = this.getBranchUrl(projectId, targetBranch);
         this.log(`Create branch copy from ${sourceUrl} to: ${targetUrl}`);
@@ -97,7 +97,7 @@ export class SvnService {
                 } else {
                     reject(`failed to copy ${sourceUrl} to ${targetUrl}: ${error}`);
                 }
-            } );
+            });
         });
     }
 

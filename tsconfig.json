@@ -4,7 +4,7 @@
     "target": "es6",
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": false,
     "noUnusedLocals": true,
     "noUnusedParameters": false,

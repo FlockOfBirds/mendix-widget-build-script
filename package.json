@@ -1,7 +1,7 @@
 {
   "name": "mendix-widget-build-script",
   "widgetName": "HTMLSnippet",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Build script for checkout, build, upload and start a Mendix project in a cloud node",
   "scripts": {
     "copyTest": "copyfiles -f ./tests/HTMLSnippet.mpk ./dist/1.0.1/",
@@ -10,8 +10,8 @@
     "build": "npm run lint && tsc --inlineSourceMap false --sourcemap false -d",
     "updateProject": "tsc && set RUN_MODE=dev && node ./dist/UpdateMxProject.js",
     "deployApp": "tsc && set RUN_MODE=dev && node ./dist/DeployMxApp.js",
-    "lint": "tslint -c tslint.json '**/*.ts' --exclude '**/node_modules/**'",
-    "publish" : "npm run build && npm publish"
+    "lint": "tslint -c tslint.json '**/*.ts' --exclude 'dist/**' --exclude '**/node_modules/**'",
+    "publish": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -24,19 +24,17 @@
   },
   "homepage": "https://github.com/FlockOfBirds/mendix-widget-build-script#readme",
   "dependencies": {
-    "archiver": "^2.0.0",
+    "archiver": "^3.0.0",
     "node-svn-ultimate": "^1.1.0",
-    "request": "^2.81.0"
+    "request": "^2.88.0"
   },
   "devDependencies": {
-    "@types/archiver": "^2.0.0",
-    "@types/node": "^6.0.82",
-    "@types/request": "0.0.46",
-    "copyfiles": "^1.2.0",
-    "nodemon": "^1.11.0",
-    "ts-node": "^3.2.0",
-    "tslint": "^5.5.0",
-    "tslint-eslint-rules": "^4.1.1",
-    "typescript": "^2.4.1"
+    "@types/archiver": "^2.1.2",
+    "@types/node": "^10.12.12",
+    "@types/request": "^2.48.1",
+    "copyfiles": "^2.1.0",
+    "tslint": "^5.11.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.2.2"
   }
 }

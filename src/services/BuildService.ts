@@ -97,7 +97,7 @@ export class BuildService {
                             this.log("Build completed");
                             resolve(deployPackage);
                         } else if (deployPackage.Status === "Failed") {
-                            reject("Build Failed. Check the 'Latest build output' on https://cloud.home.mendix.com DEPLOY > Environments" );
+                            reject("Build Failed. Check the 'Latest build output' on https://cloud.home.mendix.com DEPLOY > Environments");
                         } else {
                             this.log(". ", true);
                             checkStatus();
